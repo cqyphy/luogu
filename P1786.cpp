@@ -6,8 +6,9 @@ struct person
 {
     string name;
     string type;
-    int contribution;
+    long long contribution;
     long level;
+    int id;
     //person(string name,string type,long level,int contribution):name(name),type(type),level(level),contribution(contribution) {};
 
     friend istream & operator >> (istream &in,person &p);
@@ -24,29 +25,42 @@ ostream & operator << (ostream &out,person &p){
     return out;
 }
 int order( string str){
-    if (str == "HuFa")
+    if (str == "BangZhu")
     {
         return 1;
     }
-    if (str == "ZhangLao")
+    if (str == "FuBangZhu")
     {
         return 2;
     }
-    if (str == "TangZhu")
+    if (str == "HuFa")
     {
         return 3;
     }
-    if (str == "JingYing")
+    if (str == "ZhangLao")
     {
         return 4;
     }
-    if (str == "BangZhong")
+    if (str == "TangZhu")
     {
         return 5;
     }   
+    if (str == "JingYing")
+    {
+        return 6;
+    }   
+    if (str == "BangZhong")
+    {
+        return 7;
+    }   
     else return 0;
 };
-bool contri_sort(const person a,const person b){
+bool contri_sort(const person &a,const person &b){
+    if (a.contribution == b.contribution)
+    {
+        return a.id < b.id;
+    }
+    
     return a.contribution>b.contribution;
 }
 int main(){
@@ -57,9 +71,24 @@ int main(){
     {
         person p;
         cin >>p;
+        p.id = i+1;
         v.push_back(p);
     }
-    auto it = v.begin()+3;
+    auto it = v.begin();
+    stable_sort(it,v.end(),[](const person &a,const person &b){
+        if (order(a.type)==order(b.type))
+        {
+            if (a.level == b.level)
+            {
+                return a.id < b.id;
+            }
+            
+            return a.level > b.level;
+        }
+        
+        return order(a.type)<order(b.type);
+    });
+    it += 3;
     if (it == v.end())
     {
         for (auto i = v.begin(); i != v.end(); i++)
@@ -68,9 +97,7 @@ int main(){
         }
         return 0;
     }
-    stable_sort(it,v.end(),[](const person a,const person b){
-            return order(a.type)<order(b.type);
-        });
+
     stable_sort(it,v.end(),contri_sort);
     for (size_t i = 0; i < num-3; i++)
     {
@@ -96,12 +123,18 @@ int main(){
         }
         
     }
-    stable_sort(it,v.end(),[](const person a,const person b){
-        if (a.type != b.type)
+    stable_sort(it,v.end(),[](const person &a,const person &b){
+        if (order(a.type)==order(b.type))
         {
-            return order(a.type)<order(b.type);
+            if (a.level == b.level)
+            {
+                return a.id < b.id;
+            }
+            
+            return a.level > b.level;
         }
-        return a.level > b.level;
+        
+        return order(a.type)<order(b.type);
     });
     for (it = v.begin(); it != v.end(); it++)
     {
