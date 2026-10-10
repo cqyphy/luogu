@@ -15,10 +15,10 @@ struct ListNode {
 class Solution {
 public:
     static ListNode* mini(vector<ListNode*>& lists,ListNode *&test){
-        ListNode *tmp = lists[1];
+        ListNode *tmp = lists[0];
         test = tmp;
-        int index = 1;
-        for (int i = 1; i < lists.size(); i++)
+        int index = 0;
+        for (int i = 0; i < lists.size(); i++)
         {
             if (lists[i] == nullptr) continue;
             if(tmp == nullptr || tmp->val > lists[i]->val)
@@ -29,32 +29,22 @@ public:
             }
         }
         if (test != nullptr)
+        {
             lists[index] = lists[index]->next;
+            tmp->next = nullptr;
+        }
         return tmp;
     }
     ListNode* mergeKLists(vector<ListNode*>& lists) {
         if (lists.empty()) return nullptr;
         if (lists.size()<2) return lists[0];
-        ListNode *tmp = new ListNode(-200,lists[0]), *test = nullptr, *p = tmp->next, *pre = tmp;
+        ListNode *tmp = new ListNode(-200,lists[0]), *test = nullptr, *p = tmp;
         while (true)
         {
             ListNode *s = mini(lists,test);
             if (test == nullptr) break;
-            while (s != nullptr)
-            {
-                if (p == nullptr || s->val < p->val)
-                {
-                    s->next = p;
-                    pre->next = s;
-                    p = s;
-                    s = nullptr;
-                }
-                else
-                {
-                    p = p->next;
-                    pre = pre->next;
-                }
-            }                        
+            p->next = s;        
+            p = p->next;     
         }
         return tmp->next;
     }
